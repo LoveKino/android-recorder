@@ -1,0 +1,30 @@
+{
+  "name": "android-recorder",
+  "version": "0.0.1",
+  "description": "record user action on android devices",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha test/**/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LoveKino/android-recorder.git"
+  },
+  "keywords": [
+    "recorder",
+    "android",
+    "emulator"
+  ],
+  "author": "ddchen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LoveKino/android-recorder/issues"
+  },
+  "homepage": "https://github.com/LoveKino/android-recorder#readme",
+  "dependencies": {
+    "spawnp": "0.0.1"
+  }
+}
