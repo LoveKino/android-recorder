@@ -3,7 +3,7 @@
 let spawnp = require('spawnp');
 
 let {
-    adbCon
+    adbCon, install
 } = require('android-yard');
 
 let sleep = (duration) => {
@@ -48,23 +48,20 @@ module.exports = ({
     });
 
     // reinstall test apk
-    return spawnp(`adb uninstall ${packageName}`, [], {
+    return spawnp([
+        'adb root',
+        `adb uninstall ${packageName}`,
+        `adb install ${apkPath}`
+    ], [], {
         stdio: 'inherit'
     }).then(() => {
-        return spawnp(`adb install ${apkPath}`, [], {
-            stdio: 'inherit'
-        });
-    }).then(() => {
         // deploy yard-dex.jar
-        return spawnp('../node_modules/android-yard/bin/deployYard.sh', [yardDir], {
-            cwd: __dirname,
-            stdio: 'inherit'
-        });
+        return install(yardDir);
     }).then(() => {
-        return spawnp('../node_modules/android-yard/bin/lunchApp.sh', [packageName, packageName + '.' + mainActivity], {
-            cwd: __dirname,
-            stdio: 'inherit'
-        });
+        return spawnp([
+            `adb shell am force-stop ${packageName}`,
+            `adb shell am start -n ${packageName}/${packageName}.${mainActivity}`
+        ]);
     }).then(() => {
         return sleep(2000);
     });
