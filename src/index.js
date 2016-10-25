@@ -24,45 +24,75 @@ let sleep = (duration) => {
  * 4. deploy yard-dex.jar
  *
  * 5. launch apk
+ *
+ * @param store
+ *      1. receiveAction
+ *      2. receiveState
  */
-
 module.exports = ({
-    apkPath,
-    packageName,
-    mainActivity,
-    channel,
-    yardDir
-}, {
-    recieveEvent
+    receiveAction
 }) => {
-    // TODO start recorder emulator
-    let {
-        connect
-    } = adbCon();
+    return {
+        start: ({
+            apkPath,
+            packageName,
+            mainActivity,
+            channel,
+            yardDir,
+            rootId
+        }) => {
+            // TODO start recorder emulator
+            let {
+                connect
+            } = adbCon();
 
-    connect(channel, {
-        feedEvent: (ev) => {
-            recieveEvent(ev);
-            return true;
+            connect(channel, {
+                feedEvent: (ev) => {
+                    /**
+                     * 1. serialize event
+                     * 2. serialize node
+                     * 3. serialize path
+                     */
+                    receiveAction({
+                        winId: rootId,
+                        event: ev,
+                        extra: {},
+                        source: {
+                            node: {},
+                            path: {}
+                        },
+                        time: new Date().getTime(),
+                        type: 'action'
+                    });
+                    return true;
+                }
+            });
+
+            // reinstall test apk
+            return spawnp([
+                'adb root',
+                `adb uninstall ${packageName}`,
+                `adb install ${apkPath}`
+            ], [], {
+                stdio: 'inherit'
+            }).then(() => {
+                // deploy yard-dex.jar
+                return install(yardDir);
+            }).then(() => {
+                return spawnp([
+                    `adb shell am force-stop ${packageName}`,
+                    `adb shell am start -n ${packageName}/${packageName}.${mainActivity}`
+                ]);
+            }).then(() => {
+                return sleep(2000);
+            });
+
+        },
+
+        stop: ({
+            packageName
+        }) => {
+            return spawnp(`adb shell am force-stop ${packageName}`);
         }
-    });
-
-    // reinstall test apk
-    return spawnp([
-        'adb root',
-        `adb uninstall ${packageName}`,
-        `adb install ${apkPath}`
-    ], [], {
-        stdio: 'inherit'
-    }).then(() => {
-        // deploy yard-dex.jar
-        return install(yardDir);
-    }).then(() => {
-        return spawnp([
-            `adb shell am force-stop ${packageName}`,
-            `adb shell am start -n ${packageName}/${packageName}.${mainActivity}`
-        ]);
-    }).then(() => {
-        return sleep(2000);
-    });
+    };
 };
