@@ -46,23 +46,24 @@ module.exports = ({
                 connect
             } = adbCon();
 
-            connect(channel, {
+            let call = connect(channel, {
+                // TODO complete informations
                 feedEvent: (ev) => {
-                    /**
-                     * 1. serialize event
-                     * 2. serialize node
-                     * 3. serialize path
-                     */
                     receiveAction({
+                        rootId,
+                        winId: rootId
+                    }, {
                         winId: rootId,
                         event: ev,
                         extra: {},
                         source: {
-                            node: {},
+                            node: {
+                                attributes: {}
+                            },
                             path: {}
                         },
                         time: new Date().getTime(),
-                        type: 'action'
+                        platform: 'android'
                     });
                     return true;
                 }
@@ -84,9 +85,11 @@ module.exports = ({
                     `adb shell am start -n ${packageName}/${packageName}.${mainActivity}`
                 ]);
             }).then(() => {
-                return sleep(2000);
+                // TODO support detect
+                return sleep(8000);
+            }).then(() => {
+                return call('startRecord');
             });
-
         },
 
         stop: ({
