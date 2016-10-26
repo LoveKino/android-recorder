@@ -48,7 +48,6 @@ module.exports = ({
             } = adbCon();
 
             let call = connect(channel, commandDir, {
-                // TODO complete informations
                 feedEvent: (ev, source) => {
                     receiveAction({
                         rootId,
