@@ -38,6 +38,7 @@ module.exports = ({
             packageName,
             mainActivity,
             channel,
+            commandDir,
             yardDir,
             rootId
         }) => {
@@ -46,9 +47,9 @@ module.exports = ({
                 connect
             } = adbCon();
 
-            let call = connect(channel, {
+            let call = connect(channel, commandDir, {
                 // TODO complete informations
-                feedEvent: (ev) => {
+                feedEvent: (ev, source) => {
                     receiveAction({
                         rootId,
                         winId: rootId
@@ -56,12 +57,7 @@ module.exports = ({
                         winId: rootId,
                         event: ev,
                         extra: {},
-                        source: {
-                            node: {
-                                attributes: {}
-                            },
-                            path: {}
-                        },
+                        source: source,
                         time: new Date().getTime(),
                         platform: 'android'
                     });
