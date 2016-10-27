@@ -81,7 +81,7 @@ module.exports = ({
                 ]);
             }).then(() => {
                 // TODO support detect
-                return sleep(8000);
+                return sleep(10000);
             }).then(() => {
                 return call('startRecord');
             });
