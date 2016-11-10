@@ -1,6 +1,6 @@
 {
   "name": "android-recorder",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "record user action on android devices",
   "main": "index.js",
   "directories": {
@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/LoveKino/android-recorder#readme",
   "dependencies": {
-    "android-yard": "0.0.5",
-    "spawnp": "0.0.2"
+    "android-yard": "0.0.7",
+    "spawnp": "^0.1.0"
   }
 }
